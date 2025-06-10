@@ -1,0 +1,130 @@
+
+campos:
+  unidade_requisitante:
+    pergunta: "Identifique a Unidade Requisitante:"
+    tipo: texto
+  contato:
+    pergunta: "Informe e-mail/telefone do responsável:"
+    tipo: texto
+  modalidade:
+    pergunta: "Qual a modalidade da contratação?"
+    tipo: select
+    opcoes: [pregao_eletronico, concorrencia, dispensa_inexig, srp]
+  tipo_objeto:
+    pergunta: "O objeto é Bens, Serviços ou Serviço Continuado?"
+    tipo: radio
+    opcoes: [bens, servicos, continuado]
+  fornecimento:
+    pergunta: "Forma de fornecimento:"
+    tipo: radio
+    opcoes: [unico, continuo]
+
+  requisitos_opcionais:
+    pergunta: "Selecione requisitos opcionais que se aplicam ao seu objeto:"
+    tipo: checklist
+    opcoes:
+      - id: instal_montagem
+        label: "Condições de Instalação e Montagem"
+        visivel_se: tipo_objeto == "bens"
+      - id: ensaio_cert
+        label: "Exigência de ensaio ou certificação"
+        visivel_se: tipo_objeto == "bens"
+      - id: amostra
+        label: "Exigência de amostra"
+        visivel_se: tipo_objeto == "bens"
+      - id: prazo_validade
+        label: "Prazo de validade"
+        visivel_se: tipo_objeto == "bens"
+      - id: catalogo_op
+        label: "Catálogos de operação"
+        visivel_se: tipo_objeto == "bens"
+      - id: carta_solid
+        label: "Carta de solidariedade"
+        visivel_se: tipo_objeto == "bens"
+      - id: treinamento
+        label: "Treinamento"
+      - id: manutencao
+        label: "Manutenção e suporte técnico"
+      - id: cessao_direitos
+        label: "Cessão de direitos"
+      - id: sigilo
+        label: "Cláusula de Sigilo e Inviolabilidade"
+      - id: vigencia_ata_srp
+        label: "Vigência da Ata de Registro de Preços"
+        visivel_se: modalidade == "srp"
+      - id: garantia_execucao
+        label: "Garantia de execução contratual"
+      - id: vistoria
+        label: "Vistoria prévia"
+        visivel_se: tipo_objeto == "bens"
+      - id: antecipacao_pagto
+        label: "Antecipação de pagamento"
+      - id: sustentabilidade
+        label: "Critérios de sustentabilidade"
+
+blocos_condicionais:
+  srp:
+    marcador: IF_SRP
+    condicao: modalidade == "srp"
+  bens:
+    marcador: IF_BENS
+    condicao: tipo_objeto == "bens"
+  servicos:
+    marcador: IF_SERVICOS
+    condicao: tipo_objeto in ["servicos", "continuado"]
+  continuo:
+    marcador: IF_CONTINUO
+    condicao: fornecimento == "continuo"
+  # vigência blocos já no template
+  vig_padrao:
+    marcador: IF_VIG_PADRAO
+    condicao: fornecimento != "continuo"
+  vig_continuo:
+    marcador: IF_VIG_CONTINUO
+    condicao: fornecimento == "continuo"
+  # opcionais checklist
+  instal_montagem:
+    marcador: IF_INSTAL_MONTAGEM
+    condicao: instal_montagem is True
+  ensaio_cert:
+    marcador: IF_ENSAIO_CERT
+    condicao: ensaio_cert is True
+  amostra:
+    marcador: IF_AMOSTRA
+    condicao: amostra is True
+  prazo_validade:
+    marcador: IF_PRAZO_VALIDADE
+    condicao: prazo_validade is True
+  catalogo_op:
+    marcador: IF_CATALOGO
+    condicao: catalogo_op is True
+  carta_solid:
+    marcador: IF_CARTA_SOLID
+    condicao: carta_solid is True
+  treinamento:
+    marcador: IF_TREINAMENTO
+    condicao: treinamento is True
+  manutencao:
+    marcador: IF_MANUTENCAO
+    condicao: manutencao is True
+  cessao_direitos:
+    marcador: IF_CESSAO_DIREITOS
+    condicao: cessao_direitos is True
+  sigilo:
+    marcador: IF_SIGILO
+    condicao: sigilo is True
+  vigencia_ata_srp:
+    marcador: IF_VIGENCIA_ATA_SRP
+    condicao: vigencia_ata_srp is True
+  garantia_execucao:
+    marcador: IF_GARANTIA_EXECUCAO
+    condicao: garantia_execucao is True
+  vistoria:
+    marcador: IF_VISTORIA
+    condicao: vistoria is True
+  antecipacao_pagto:
+    marcador: IF_ANTECIPACAO_PAGTO
+    condicao: antecipacao_pagto is True
+  sustentabilidade:
+    marcador: IF_SUSTENTABILIDADE
+    condicao: sustentabilidade is True
