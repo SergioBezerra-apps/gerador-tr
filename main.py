@@ -2,9 +2,25 @@
 import streamlit as st
 from rules import load_rules, evaluate_condition
 from render import render_tr
+from chatbot import answer_question, analyze_answers
 
 st.set_page_config(page_title="Gerador de TR", layout="wide")
 st.title("Gerador de Termo de Referência – TCE‑RJ")
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+st.subheader("Chat de Orientação")
+for msg in st.session_state.messages:
+    st.chat_message(msg["role"]).write(msg["content"])
+
+prompt = st.chat_input("Faça uma pergunta")
+if prompt:
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    reply = answer_question(prompt)
+    st.session_state.messages.append({"role": "assistant", "content": reply})
+    st.chat_message("user").write(prompt)
+    st.chat_message("assistant").write(reply)
 
 rules = load_rules()
 answers = {}
@@ -44,8 +60,14 @@ with st.form("tr_form"):
     submitted = st.form_submit_button("Gerar TR")
 
 if submitted:
+    with st.spinner("Analisando respostas..."):
+        keep, remove, suggestions = analyze_answers(answers)
+    if suggestions:
+        st.subheader("Sugestões")
+        for s in suggestions:
+            st.write("-", s)
     st.info("Gerando documentos...")
-    docx_path, pdf_path = render_tr(answers)
+    docx_path, pdf_path = render_tr(answers, keep_markers=keep, remove_markers=remove)
     st.success("Arquivos gerados com sucesso!")
     with open(docx_path, "rb") as f:
         st.download_button("Baixar DOCX", f, file_name="TR.docx")
