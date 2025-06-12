@@ -1,0 +1,4 @@
+Este documento contém orientações sobre a elaboração do Termo de Referência.
+Use o texto para responder dúvidas dos usuários e para avaliar as respostas
+coletadas no formulário. As cláusulas condicionais são marcadas com a sintaxe
+[[IF_NOME]] e [[END_IF_NOME]].

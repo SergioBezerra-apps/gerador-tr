@@ -7,9 +7,17 @@ from rules import load_rules, evaluate_condition
 
 TEMPLATE_PATH = Path(__file__).with_name("tr_template.docx")
 
-def filter_docx(doc: Document, rules, context):
+def filter_docx(doc: Document, rules, context, keep_markers=None, remove_markers=None):
+    keep_markers = set(keep_markers or [])
+    remove_markers = set(remove_markers or [])
     for cond_name, info in rules['blocos_condicionais'].items():
-        keep = evaluate_condition(info['condicao'], context)
+        marker = info['marcador']
+        if marker in remove_markers:
+            keep = False
+        elif marker in keep_markers:
+            keep = True
+        else:
+            keep = evaluate_condition(info['condicao'], context)
         start_pat = f"[[{info['marcador']}]]"
         end_pat = f"[[END_{info['marcador']}]]"
         inside = False
@@ -36,14 +44,14 @@ def filter_docx(doc: Document, rules, context):
     for p in doc.paragraphs:
         p.text = re.sub(r"\[\[.*?\]\]", "", p.text)
 
-def render_tr(context, rules=None):
+def render_tr(context, rules=None, keep_markers=None, remove_markers=None):
     if rules is None:
         rules = load_rules()
     tpl = DocxTemplate(TEMPLATE_PATH)
     tpl.render(context)
     tpl.save("temp_render.docx")
     doc = Document("temp_render.docx")
-    filter_docx(doc, rules, context)
+    filter_docx(doc, rules, context, keep_markers, remove_markers)
     doc.save("TR_final.docx")
     # convert to PDF
     try:
