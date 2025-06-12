@@ -4,16 +4,21 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import openai
+from docx import Document
 
-ORIENTATION_PATH = Path(__file__).with_name("orientacao.txt")
+ORIENTATION_PATH = Path(__file__).with_name("orientacao.docx")
 
 
 def _load_orientation() -> str:
     try:
-        with open(ORIENTATION_PATH, "r", encoding="utf-8") as f:
-            return f.read()
-    except FileNotFoundError:
-        return ""
+        doc = Document(ORIENTATION_PATH)
+        return "\n".join(p.text for p in doc.paragraphs)
+    except Exception:
+        try:
+            with open(ORIENTATION_PATH.with_suffix(".txt"), "r", encoding="utf-8") as f:
+                return f.read()
+        except FileNotFoundError:
+            return ""
 
 
 ORIENTATION_TEXT = _load_orientation()
